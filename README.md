@@ -15,6 +15,7 @@ Proyek ini menerapkan *unsupervised visual clustering* pada citra makanan Nusant
 
 Notebook utama tersedia pada [`notebook/final-project-fp-kcv-2026.ipynb`](notebook/final-project-fp-kcv-2026.ipynb).
 
+> **Catatan:** Nomor cluster merupakan pengidentifikasi anonim, bukan nama kelas makanan. Sebagai contoh, `cluster = 0` tidak secara langsung merepresentasikan Ayam Bakar atau jenis makanan tertentu lainnya.
 
 ---
 
@@ -130,6 +131,7 @@ Pipeline utama terdiri atas beberapa tahap yang digambarkan sebagai berikut:
   <img src="image/pipeline.png" alt="Pipeline metodologi DINO, UMAP, dan K-Means">
 </p>
 
+> Jika berkas diagram Anda bernama `image.png` dan berada di root repositori, ubah `image/pipeline.png` menjadi `image.png`.
 
 ### 1. Prapemrosesan Citra
 
@@ -154,25 +156,25 @@ Notebook menggunakan backbone DINO pralatih sebagai pengekstrak fitur beku atau 
 
 Misalkan keluaran backbone untuk citra $x_i$ dinyatakan sebagai:
 
-$$
+```math
 f(x_i) \in \mathbb{R}^{768}.
-$$
+```
 
 Notebook menerapkan normalisasi L2 pada setiap baris embedding:
 
-$$
+```math
 \hat{f}(x_i)
 =
 \frac{f(x_i)}{\lVert f(x_i) \rVert_2}.
-$$
+```
 
 dengan:
 
-$$
+```math
 \lVert f(x_i) \rVert_2
 =
 \sqrt{\sum_{j=1}^{768} f_j(x_i)^2}.
-$$
+```
 
 Embedding disimpan sebagai:
 
@@ -187,11 +189,11 @@ Tidak ada parameter backbone yang diperbarui selama ekstraksi fitur dan tidak ad
 
 Sebelum reduksi dimensi, embedding pelatihan distandardisasi per fitur menggunakan:
 
-$$
+```math
 z_{ij}
 =
 \frac{\hat{f}_{ij}-\mu_j}{\sigma_j}.
-$$
+```
 
 dengan $\mu_j$ sebagai rata-rata fitur ke-$j$ pada data pelatihan dan $\sigma_j$ sebagai simpangan baku fitur ke-$j$ pada data pelatihan. Parameter standardisasi hanya dihitung dari data pelatihan. Scaler yang telah di-*fit* kemudian digunakan untuk mentransformasi embedding data pengujian.
 
@@ -208,11 +210,11 @@ Hyperparameter UMAP dioptimalkan menggunakan 25 percobaan Optuna:
 
 Pada setiap percobaan, UMAP mentransformasi embedding pelatihan yang telah distandardisasi, K-Means membagi hasil transformasi menjadi $k=15$ kelompok, dan kualitas konfigurasi dievaluasi menggunakan:
 
-$$
+```math
 J
 =
 0.45S + 0.45T - 0.10D.
-$$
+```
 
 dengan $S$ sebagai rata-rata *silhouette coefficient*, $T$ sebagai nilai *trustworthiness*, dan $D$ sebagai *Davies-Bouldin index*.
 
@@ -240,13 +242,13 @@ random_state = 3407
 
 Diberikan koordinat UMAP $y_i$, K-Means meminimalkan jumlah kuadrat jarak dalam cluster:
 
-$$
+```math
 \mathcal{L}
 =
 \sum_{c=1}^{15}
 \sum_{i \in C_c}
 \lVert y_i-\mu_c \rVert_2^2.
-$$
+```
 
 dengan $C_c$ sebagai himpunan sampel pada cluster ke-$c$, $\mu_c$ sebagai centroid cluster ke-$c$, dan $y_i$ sebagai koordinat UMAP untuk sampel ke-$i$.
 
@@ -264,11 +266,11 @@ dengan $C_c$ sebagai himpunan sampel pada cluster ke-$c$, $\mu_c$ sebagai centro
 
 Silhouette coefficient untuk sampel ke-$i$ dihitung menggunakan:
 
-$$
+```math
 s_i
 =
 \frac{b_i-a_i}{\max(a_i,b_i)}.
-$$
+```
 
 dengan $a_i$ sebagai rata-rata jarak sampel ke anggota lain dalam cluster yang sama dan $b_i$ sebagai rata-rata jarak terkecil ke cluster lain.
 
@@ -368,6 +370,7 @@ CUDA    : 12.8
 GPU     : NVIDIA GeForce RTX 4060
 ```
 
+> Sesuaikan versi di atas dengan lingkungan yang benar-benar digunakan untuk menghasilkan eksperimen final.
 
 Reproduksibilitas numerik secara persis masih dapat dipengaruhi oleh perbedaan perangkat keras, implementasi kernel CUDA, versi pustaka, versi driver, revisi bobot pralatih, dan operasi yang tidak sepenuhnya deterministik.
 
