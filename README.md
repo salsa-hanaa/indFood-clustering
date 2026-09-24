@@ -145,28 +145,34 @@ image_size  = 518 × 518
 
 Notebook menggunakan backbone DINO pralatih sebagai pengekstrak fitur beku atau *frozen feature extractor*. Kepala klasifikasinya dihapus sehingga model menghasilkan representasi berdimensi 768 untuk setiap citra.
 
-Misalkan keluaran backbone untuk citra \(x_i\) dinyatakan sebagai:
+Misalkan keluaran backbone untuk citra $x_i$ dinyatakan sebagai:
 
-\[
+$$
+[
 f(x_i) \in \mathbb{R}^{768}.
-\]
+]
+$$
 
 Notebook menerapkan normalisasi L2 pada setiap baris embedding:
 
-\[
+$$
+[
 \hat{f}(x_i)
 =
 \frac{f(x_i)}
 {\lVert f(x_i) \rVert_2},
-\]
+]
+$$
 
 dengan:
 
-\[
+$$
+[
 \lVert f(x_i) \rVert_2
 =
 \sqrt{\sum_{j=1}^{768} f_j(x_i)^2}.
-\]
+]
+$$
 
 Embedding yang dihasilkan disimpan sebagai:
 
@@ -181,13 +187,15 @@ Tidak ada parameter backbone yang diperbarui selama ekstraksi fitur dan tidak ad
 
 Sebelum reduksi dimensi, embedding pelatihan distandardisasi per fitur menggunakan:
 
-\[
+$$
+[
 z_{ij}
 =
 \frac{\hat{f}_{ij}-\mu_j}{\sigma_j},
-\]
+]
+$$
 
-dengan \(\mu_j\) sebagai rata-rata fitur ke-\(j\) pada data pelatihan dan \(\sigma_j\) sebagai simpangan baku fitur ke-\(j\) pada data pelatihan. Parameter standardisasi hanya dihitung dari data pelatihan. Scaler yang telah di-*fit* kemudian digunakan kembali untuk mentransformasi embedding data pengujian.
+dengan $(\mu_j)$ sebagai rata-rata fitur ke-$j$ pada data pelatihan dan $(\sigma_j)$ sebagai simpangan baku fitur ke-$j$ pada data pelatihan. Parameter standardisasi hanya dihitung dari data pelatihan. Scaler yang telah di-*fit* kemudian digunakan kembali untuk mentransformasi embedding data pengujian.
 
 #### Ruang Pencarian UMAP
 
@@ -202,11 +210,13 @@ Hyperparameter UMAP dioptimalkan menggunakan 25 percobaan Optuna dengan ruang pe
 
 Pada setiap percobaan, UMAP mentransformasi embedding pelatihan yang telah distandardisasi, K-Means membagi hasil transformasi menjadi \(k=15\) kelompok, dan kualitas konfigurasi dievaluasi menggunakan:
 
-\[
+$$
+[
 J
 =
 0{,}45S + 0{,}45T - 0{,}10D,
-\]
+]
+$$
 
 dengan \(S\) sebagai rata-rata silhouette coefficient, \(T\) sebagai nilai trustworthiness, dan \(D\) sebagai Davies-Bouldin index.
 
@@ -232,17 +242,19 @@ n_init       = 20
 random_state = 3407
 ```
 
-Diberikan koordinat UMAP \(y_i\), K-Means meminimalkan jumlah kuadrat jarak dalam cluster:
+Diberikan koordinat UMAP $y_i$, K-Means meminimalkan jumlah kuadrat jarak dalam cluster:
 
-\[
+$$
+[
 \mathcal{L}
 =
 \sum_{c=1}^{15}
 \sum_{i \in C_c}
 \lVert y_i-\mu_c \rVert_2^2,
-\]
+]
+$$
 
-dengan \(C_c\) sebagai himpunan sampel pada cluster ke-\(c\), \(\mu_c\) sebagai centroid cluster ke-\(c\), dan \(y_i\) sebagai koordinat UMAP untuk sampel ke-\(i\).
+dengan $C_c)$ sebagai himpunan sampel pada cluster ke-$c$, $\mu_c$ sebagai centroid cluster ke-$c$, dan $y_i$ sebagai koordinat UMAP untuk sampel ke-$i$.
 
 ---
 
@@ -256,14 +268,16 @@ dengan \(C_c\) sebagai himpunan sampel pada cluster ke-\(c\), \(\mu_c\) sebagai 
 | Davies-Bouldin index | 0,4707 | Menunjukkan cluster yang relatif kompak serta terpisah |
 | Trustworthiness | 0,9639 | Menunjukkan preservasi lingkungan lokal yang tinggi dari ruang DINO terstandardisasi |
 
-Silhouette coefficient untuk sampel ke-\(i\) dihitung menggunakan:
+Silhouette coefficient untuk sampel ke-$i$ dihitung menggunakan:
 
-\[
+$$
+[
 s_i
 =
 \frac{b_i-a_i}
 {\max(a_i,b_i)},
-\]
+]
+$$
 
 dengan \(a_i\) sebagai rata-rata jarak sampel ke anggota lain dalam cluster yang sama dan \(b_i\) sebagai rata-rata jarak terkecil ke cluster lain.
 
