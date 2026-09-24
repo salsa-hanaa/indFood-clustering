@@ -7,11 +7,14 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
 </p>
 
-![alt text](/image/overview.png)
+<p align="center">
+  <img src="image/overview.png" alt="Gambaran umum pipeline clustering makanan Nusantara">
+</p>
 
 Proyek ini menerapkan *unsupervised visual clustering* pada citra makanan Nusantara menggunakan representasi citra dari model DINO pralatih, reduksi dimensi UMAP yang dioptimalkan menggunakan Optuna, serta algoritma K-Means.
 
-Notebook utama yang digunakan dalam eksperimen ini tersedia pada [`notebook/final-project-fp-kcv-2026.ipynb`](../notebook/final-project-fp-kcv-2026.ipynb).
+Notebook utama tersedia pada [`notebook/final-project-fp-kcv-2026.ipynb`](notebook/final-project-fp-kcv-2026.ipynb).
+
 
 ---
 
@@ -26,6 +29,7 @@ Notebook utama yang digunakan dalam eksperimen ini tersedia pada [`notebook/fina
 7. [Reproduksibilitas](#reproduksibilitas)
 8. [Keterbatasan dan Rencana Penelitian Lanjutan](#keterbatasan-dan-rencana-penelitian-lanjutan)
 9. [Kesimpulan](#kesimpulan)
+10. [Sumber Dataset](#sumber-dataset)
 
 ---
 
@@ -33,9 +37,9 @@ Notebook utama yang digunakan dalam eksperimen ini tersedia pada [`notebook/fina
 
 Visualisasi utama dari eksperimen DINO ditampilkan pada tabel berikut.
 
-| Embedding UMAP | Distribusi Ukuran Cluster | 
+| Embedding UMAP | Distribusi Ukuran Cluster |
 |---|---|
-| [![UMAP clusters](image/umap.png)](image/umap.png) | [![Cluster sizes](image/cluster_size.png)](image/cluster_size.png) | 
+| [![UMAP clusters](image/umap.png)](image/umap.png) | [![Cluster sizes](image/cluster_size.png)](image/cluster_size.png) |
 
 Hasil evaluasi internal pada 4.052 citra pelatihan adalah sebagai berikut:
 
@@ -52,7 +56,7 @@ Hasil evaluasi internal pada 4.052 citra pelatihan adalah sebagai berikut:
 
 ## Tujuan Penelitian
 
-Dataset yang digunakan berupa kumpulan citra tanpa label pada setiap citra, tetapi memiliki inventaris 15 kemungkinan kategori makanan Nusantara:
+Dataset yang digunakan berupa kumpulan citra tanpa label per citra, tetapi memiliki inventaris 15 kemungkinan kategori makanan Nusantara:
 
 1. Ayam Bakar
 2. Ayam Betutu
@@ -70,9 +74,9 @@ Dataset yang digunakan berupa kumpulan citra tanpa label pada setiap citra, teta
 14. Sate Padang
 15. Soto
 
-Eksperimen ini bertujuan untuk menyelidiki apakah kelompok visual yang bermakna secara semantik dapat ditemukan tanpa pelatihan terawasi atau *supervised learning*.
+Eksperimen ini bertujuan menyelidiki apakah kelompok visual yang bermakna secara semantik dapat ditemukan tanpa pelatihan terawasi atau *supervised learning*.
 
-Secara khusus, pipeline eksperimen menghasilkan:
+Pipeline eksperimen menghasilkan:
 
 - satu penugasan cluster untuk setiap citra;
 - evaluasi kualitas dan separasi cluster;
@@ -105,7 +109,7 @@ Format citra yang didukung meliputi JPG, JPEG, PNG, BMP, WEBP, TIFF, dan TIF. Na
 
 ### Ringkasan Pembersihan Dataset
 
-Loader awal menemukan sebanyak 4.257 citra pelatihan dan 2.057 citra pengujian. Pemeriksaan kualitas data kemudian menghapus 200 citra *placeholder* berukuran 64 × 64 piksel dari data pelatihan, 5 citra duplikat identik dari data pelatihan, dan 1 citra duplikat identik dari data pengujian.
+Loader awal menemukan 4.257 citra pelatihan dan 2.057 citra pengujian. Pemeriksaan kualitas data menghapus 200 citra *placeholder* berukuran 64 × 64 piksel dari data pelatihan, 5 citra duplikat identik dari data pelatihan, dan 1 citra duplikat identik dari data pengujian.
 
 | Split | Jumlah Awal | Setelah Penghapusan *Placeholder* | Setelah Penghapusan Duplikat | Jumlah Akhir |
 |---|---:|---:|---:|---:|
@@ -114,15 +118,18 @@ Loader awal menemukan sebanyak 4.257 citra pelatihan dan 2.057 citra pengujian. 
 
 ### Audit Data Eksploratif
 
-Analisis data eksploratif mencakup pemeriksaan keterbacaan berkas citra, dimensi citra, rasio aspek, statistik warna dan kecerahan, sinyal kualitas citra, hash SHA-256, serta kelompok citra duplikat. Pemeriksaan dilakukan untuk mencegah citra rusak, citra duplikat, atau citra *placeholder* sintetis memasuki model representasi.
+Analisis data eksploratif mencakup pemeriksaan keterbacaan berkas, dimensi dan rasio aspek citra, statistik warna dan kecerahan, sinyal kualitas citra, hash SHA-256, serta kelompok citra duplikat. Pemeriksaan dilakukan untuk mencegah citra rusak, duplikat, atau *placeholder* sintetis memasuki model representasi.
 
 ---
 
 ## Metodologi
 
-Pipeline utama terdiri atas beberapa tahap ag dapat dimodelkan sebagai berikut,
+Pipeline utama terdiri atas beberapa tahap yang digambarkan sebagai berikut:
 
-![alt text](image.png)
+<p align="center">
+  <img src="image/pipeline.png" alt="Pipeline metodologi DINO, UMAP, dan K-Means">
+</p>
+
 
 ### 1. Prapemrosesan Citra
 
@@ -133,7 +140,7 @@ mean = (0.485, 0.456, 0.406)
 std  = (0.229, 0.224, 0.225)
 ```
 
-Dataloader pelatihan mendefinisikan augmentasi moderat berupa *random resized crop*, pembalikan horizontal, rotasi kecil, *color jitter*, Gaussian blur, dan konversi sesekali menjadi citra skala abu-abu. Tahap ekstraksi fitur menggunakan transformasi evaluasi yang deterministik sehingga embedding yang disimpan merepresentasikan satu tampilan citra yang konsisten dan dapat direproduksi.
+Dataloader pelatihan mendefinisikan augmentasi moderat berupa *random resized crop*, pembalikan horizontal, rotasi kecil, *color jitter*, Gaussian blur, dan konversi sesekali menjadi citra skala abu-abu. Ekstraksi fitur menggunakan transformasi evaluasi deterministik sehingga embedding yang disimpan merepresentasikan satu tampilan citra yang konsisten dan dapat direproduksi.
 
 ```text
 batch_size  = 64
@@ -148,58 +155,49 @@ Notebook menggunakan backbone DINO pralatih sebagai pengekstrak fitur beku atau 
 Misalkan keluaran backbone untuk citra $x_i$ dinyatakan sebagai:
 
 $$
-[
 f(x_i) \in \mathbb{R}^{768}.
-]
 $$
 
 Notebook menerapkan normalisasi L2 pada setiap baris embedding:
 
 $$
-[
 \hat{f}(x_i)
 =
-\frac{f(x_i)}
-{\lVert f(x_i) \rVert_2},
-]
+\frac{f(x_i)}{\lVert f(x_i) \rVert_2}.
 $$
 
 dengan:
 
 $$
-[
 \lVert f(x_i) \rVert_2
 =
 \sqrt{\sum_{j=1}^{768} f_j(x_i)^2}.
-]
 $$
 
-Embedding yang dihasilkan disimpan sebagai:
+Embedding disimpan sebagai:
 
 ```text
 train_embeddings.npy
 test_embeddings.npy
 ```
 
-Tidak ada parameter backbone yang diperbarui selama ekstraksi fitur dan tidak ada label makanan yang digunakan dalam proses pembentukan representasi.
+Tidak ada parameter backbone yang diperbarui selama ekstraksi fitur dan tidak ada label makanan yang digunakan dalam pembentukan representasi.
 
 ### 3. Standardisasi dan Optimasi UMAP
 
 Sebelum reduksi dimensi, embedding pelatihan distandardisasi per fitur menggunakan:
 
 $$
-[
 z_{ij}
 =
-\frac{\hat{f}_{ij}-\mu_j}{\sigma_j},
-]
+\frac{\hat{f}_{ij}-\mu_j}{\sigma_j}.
 $$
 
-dengan $(\mu_j)$ sebagai rata-rata fitur ke-$j$ pada data pelatihan dan $(\sigma_j)$ sebagai simpangan baku fitur ke-$j$ pada data pelatihan. Parameter standardisasi hanya dihitung dari data pelatihan. Scaler yang telah di-*fit* kemudian digunakan kembali untuk mentransformasi embedding data pengujian.
+dengan $\mu_j$ sebagai rata-rata fitur ke-$j$ pada data pelatihan dan $\sigma_j$ sebagai simpangan baku fitur ke-$j$ pada data pelatihan. Parameter standardisasi hanya dihitung dari data pelatihan. Scaler yang telah di-*fit* kemudian digunakan untuk mentransformasi embedding data pengujian.
 
 #### Ruang Pencarian UMAP
 
-Hyperparameter UMAP dioptimalkan menggunakan 25 percobaan Optuna dengan ruang pencarian berikut:
+Hyperparameter UMAP dioptimalkan menggunakan 25 percobaan Optuna:
 
 | Parameter | Ruang Pencarian |
 |---|---|
@@ -208,17 +206,15 @@ Hyperparameter UMAP dioptimalkan menggunakan 25 percobaan Optuna dengan ruang pe
 | `n_components` | 2, 5, 10, 15, 30 |
 | `metric` | Euclidean atau cosine |
 
-Pada setiap percobaan, UMAP mentransformasi embedding pelatihan yang telah distandardisasi, K-Means membagi hasil transformasi menjadi \(k=15\) kelompok, dan kualitas konfigurasi dievaluasi menggunakan:
+Pada setiap percobaan, UMAP mentransformasi embedding pelatihan yang telah distandardisasi, K-Means membagi hasil transformasi menjadi $k=15$ kelompok, dan kualitas konfigurasi dievaluasi menggunakan:
 
 $$
-[
 J
 =
-0{,}45S + 0{,}45T - 0{,}10D,
-]
+0.45S + 0.45T - 0.10D.
 $$
 
-dengan \(S\) sebagai rata-rata silhouette coefficient, \(T\) sebagai nilai trustworthiness, dan \(D\) sebagai Davies-Bouldin index.
+dengan $S$ sebagai rata-rata *silhouette coefficient*, $T$ sebagai nilai *trustworthiness*, dan $D$ sebagai *Davies-Bouldin index*.
 
 #### Hyperparameter Terbaik
 
@@ -245,16 +241,14 @@ random_state = 3407
 Diberikan koordinat UMAP $y_i$, K-Means meminimalkan jumlah kuadrat jarak dalam cluster:
 
 $$
-[
 \mathcal{L}
 =
 \sum_{c=1}^{15}
 \sum_{i \in C_c}
-\lVert y_i-\mu_c \rVert_2^2,
-]
+\lVert y_i-\mu_c \rVert_2^2.
 $$
 
-dengan $C_c)$ sebagai himpunan sampel pada cluster ke-$c$, $\mu_c$ sebagai centroid cluster ke-$c$, dan $y_i$ sebagai koordinat UMAP untuk sampel ke-$i$.
+dengan $C_c$ sebagai himpunan sampel pada cluster ke-$c$, $\mu_c$ sebagai centroid cluster ke-$c$, dan $y_i$ sebagai koordinat UMAP untuk sampel ke-$i$.
 
 ---
 
@@ -271,15 +265,12 @@ dengan $C_c)$ sebagai himpunan sampel pada cluster ke-$c$, $\mu_c$ sebagai centr
 Silhouette coefficient untuk sampel ke-$i$ dihitung menggunakan:
 
 $$
-[
 s_i
 =
-\frac{b_i-a_i}
-{\max(a_i,b_i)},
-]
+\frac{b_i-a_i}{\max(a_i,b_i)}.
 $$
 
-dengan \(a_i\) sebagai rata-rata jarak sampel ke anggota lain dalam cluster yang sama dan \(b_i\) sebagai rata-rata jarak terkecil ke cluster lain.
+dengan $a_i$ sebagai rata-rata jarak sampel ke anggota lain dalam cluster yang sama dan $b_i$ sebagai rata-rata jarak terkecil ke cluster lain.
 
 ### Distribusi Cluster Pelatihan
 
@@ -305,11 +296,11 @@ Untuk setiap cluster, notebook menyimpan:
 - ukuran cluster;
 - proporsi relatif cluster terhadap keseluruhan data.
 
-Informasi tersebut mendukung inspeksi kualitatif terhadap prototipe visual dan tingkat ambiguitas pada setiap cluster. Citra dengan nilai silhouette rendah atau jarak centroid yang tinggi perlu diperiksa sebagai kemungkinan sampel batas, *outlier*, atau citra ambigu.
+Informasi tersebut mendukung inspeksi kualitatif terhadap prototipe visual dan tingkat ambiguitas setiap cluster. Citra dengan nilai silhouette rendah atau jarak centroid tinggi perlu diperiksa sebagai kemungkinan sampel batas, *outlier*, atau citra ambigu.
 
 ### Inferensi Data Pengujian
 
-Pipeline inferensi data pengujian dilakukan dengan mengekstraksi embedding menggunakan backbone DINO yang sama, menstandardisasi embedding menggunakan scaler pelatihan, mentransformasi embedding menggunakan UMAP yang telah di-*fit*, dan menetapkan cluster menggunakan centroid K-Means dari data pelatihan.
+Pipeline inferensi mengekstraksi embedding menggunakan backbone DINO yang sama, menstandardisasi embedding menggunakan scaler pelatihan, mentransformasi embedding menggunakan UMAP yang telah di-*fit*, dan menetapkan cluster menggunakan centroid K-Means dari data pelatihan.
 
 Distribusi hasil cluster pada 2.056 citra pengujian adalah:
 
@@ -321,13 +312,11 @@ cluster  9:  84    cluster 10: 143    cluster 11: 129
 cluster 12:  86    cluster 13: 151    cluster 14: 143
 ```
 
-Hasil tersebut merupakan hasil clustering *out-of-sample*, bukan pengukuran akurasi klasifikasi. Accuracy, macro-F1, confusion matrix, precision per kelas, dan recall per kelas belum dapat dihitung karena notebook tidak menggunakan label *ground truth*.
+Hasil tersebut merupakan clustering *out-of-sample*, bukan pengukuran akurasi klasifikasi. Accuracy, macro-F1, confusion matrix, precision per kelas, dan recall per kelas belum dapat dihitung karena notebook tidak menggunakan label *ground truth*.
 
 ---
 
 ## Artefak yang Dihasilkan
-
-Eksperimen menyimpan hasil utama pada direktori berikut:
 
 ```text
 output/dinov3/
@@ -358,7 +347,7 @@ output/eda/
 └── figures/
 ```
 
-Notebook juga menyediakan *interactive cluster browser* untuk inspeksi visual secara lokal. Fitur tersebut memerlukan paket `ipywidgets`.
+Notebook juga menyediakan *interactive cluster browser* untuk inspeksi visual secara lokal. Fitur ini memerlukan `ipywidgets`.
 
 ---
 
@@ -373,10 +362,12 @@ SEED = 3407
 Seed digunakan untuk NumPy, modul `random` Python, UMAP, dan K-Means. Lingkungan PyTorch dengan dukungan CUDA direkomendasikan untuk mempercepat ekstraksi representasi citra.
 
 ```text
-PyTorch : 3.10.20
-CUDA    : 12.6
+Python  : 3.11
+PyTorch : 2.8.0
+CUDA    : 12.8
 GPU     : NVIDIA GeForce RTX 4060
 ```
+
 
 Reproduksibilitas numerik secara persis masih dapat dipengaruhi oleh perbedaan perangkat keras, implementasi kernel CUDA, versi pustaka, versi driver, revisi bobot pralatih, dan operasi yang tidak sepenuhnya deterministik.
 
@@ -389,8 +380,6 @@ data/
 output/
 notebook/
 ```
-
-Jika notebook dijalankan dari direktori lain, sesuaikan konfigurasi path di dalam notebook.
 
 ### Dependensi Utama
 
@@ -416,23 +405,23 @@ ipywidgets
 
 ### 1. Belum Tersedia Penyelarasan Label Semantik
 
-Kelima belas ID cluster belum dipetakan ke nama makanan. Penelitian selanjutnya dapat melakukan penyelarasan cluster menggunakan subset kalibrasi beranotasi, algoritma Hungarian, model citra-teks, atau anotasi manual terhadap prototipe cluster.
+Kelima belas ID cluster belum dipetakan ke nama makanan. Penelitian selanjutnya dapat melakukan penyelarasan menggunakan subset kalibrasi beranotasi, algoritma Hungarian, model citra-teks, atau anotasi manual prototipe cluster.
 
 ### 2. Belum Tersedia Evaluasi Prediktif Eksternal
 
-Metrik internal hanya mengevaluasi struktur geometris hasil clustering dan tidak mengukur kemampuan model dalam mengenali jenis makanan. Benchmark berlabel yang benar-benar dipisahkan diperlukan untuk menghitung accuracy, macro-F1, precision, recall, confusion matrix, dan performa per kategori makanan.
+Metrik internal hanya mengevaluasi struktur geometris clustering dan tidak mengukur kemampuan model mengenali jenis makanan. Benchmark berlabel yang benar-benar dipisahkan diperlukan untuk menghitung accuracy, macro-F1, precision, recall, confusion matrix, dan performa per kategori.
 
 ### 3. Clustering Dilakukan Setelah Proyeksi Nonlinier
 
-K-Means diterapkan pada ruang UMAP dua dimensi. Pendekatan ini mempermudah visualisasi dan dapat menonjolkan struktur lokal, tetapi UMAP dapat mengubah hubungan jarak global pada representasi asli. Eksperimen lanjutan sebaiknya mencakup K-Means langsung pada embedding DINO berdimensi 768, PCA dilanjutkan K-Means, UMAP berdimensi lebih besar, analisis sensitivitas terhadap nilai \(k\), serta perbandingan kualitas sebelum dan sesudah reduksi dimensi.
+K-Means diterapkan pada ruang UMAP dua dimensi. Pendekatan ini mempermudah visualisasi dan dapat menonjolkan struktur lokal, tetapi UMAP dapat mengubah hubungan jarak global pada representasi asli. Eksperimen lanjutan sebaiknya mencakup K-Means langsung pada embedding DINO berdimensi 768, PCA dilanjutkan K-Means, UMAP berdimensi lebih besar, analisis sensitivitas terhadap nilai $k$, serta perbandingan kualitas sebelum dan sesudah reduksi dimensi.
 
 ### 4. Potensi Faktor Visual Pengganggu
 
-Kemiripan representasi DINO dapat dipengaruhi oleh latar belakang, jenis piring atau wadah, gaya penyajian, pencahayaan, sudut pengambilan gambar, komposisi crop, sumber citra, dan kualitas kamera. Audit terstratifikasi dan pembagian data yang mempertimbangkan sumber citra dapat membantu mengukur pengaruh faktor-faktor tersebut.
+Kemiripan representasi DINO dapat dipengaruhi latar belakang, jenis piring atau wadah, gaya penyajian, pencahayaan, sudut pengambilan gambar, komposisi crop, sumber citra, dan kualitas kamera. Audit terstratifikasi dan pembagian data yang mempertimbangkan sumber citra dapat membantu mengukur pengaruh faktor tersebut.
 
 ### 5. Penggunaan Satu Backbone dan Satu Kali Eksperimen
 
-Klaim ketahanan hasil dapat diperkuat dengan membandingkan beberapa ukuran model DINO, encoder pralatih lainnya, algoritma clustering alternatif, beberapa nilai random seed, dan beberapa konfigurasi reduksi dimensi. Algoritma alternatif yang dapat diuji meliputi Agglomerative Clustering, Gaussian Mixture Model, HDBSCAN, Spectral Clustering, dan BIRCH.
+Ketahanan hasil dapat diuji dengan membandingkan beberapa ukuran model DINO, encoder pralatih lain, algoritma clustering alternatif, beberapa random seed, dan beberapa konfigurasi reduksi dimensi. Alternatif yang dapat diuji meliputi Agglomerative Clustering, Gaussian Mixture Model, HDBSCAN, Spectral Clustering, dan BIRCH.
 
 ---
 
@@ -440,11 +429,12 @@ Klaim ketahanan hasil dapat diperkuat dengan membandingkan beberapa ukuran model
 
 Pipeline ini menunjukkan bahwa representasi citra pralatih berbasis DINO, reduksi dimensi UMAP, dan K-Means dapat menghasilkan kelompok visual yang relatif kompak dan terpisah pada dataset makanan Nusantara tanpa menggunakan label selama ekstraksi fitur maupun clustering.
 
-Eksperimen menghasilkan nilai silhouette sebesar 0,6714, Davies-Bouldin index sebesar 0,4707, dan trustworthiness sebesar 0,9639 pada 4.052 citra pelatihan. Hasil tersebut memberikan indikasi bahwa struktur lokal representasi dapat dipertahankan dengan baik dan menghasilkan pemisahan cluster yang cukup kuat.
+Eksperimen menghasilkan silhouette coefficient sebesar 0,6714, Davies-Bouldin index sebesar 0,4707, dan trustworthiness sebesar 0,9639 pada 4.052 citra pelatihan. Hasil tersebut menunjukkan bahwa struktur lokal representasi dapat dipertahankan dengan baik dan menghasilkan pemisahan cluster yang cukup kuat.
 
 Meskipun demikian, hasil clustering belum dapat diinterpretasikan sebagai klasifikasi jenis makanan. Penyelarasan semantik menggunakan data beranotasi serta evaluasi pada benchmark berlabel tetap diperlukan sebelum ID cluster dapat dikaitkan dengan kategori makanan tertentu.
 
 ---
 
-Sumber Dataset:
-https://www.kaggle.com/competitions/data-mining-action-2025 
+## Sumber Dataset
+
+Dataset tersedia melalui [Data Mining Action 2025 di Kaggle](https://www.kaggle.com/competitions/data-mining-action-2025).
