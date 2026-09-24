@@ -442,4 +442,4 @@ Meskipun demikian, hasil clustering belum dapat diinterpretasikan sebagai klasif
 Dataset tersedia melalui 
 
 - [Data Mining Action 2025 di Kaggle](https://www.kaggle.com/competitions/data-mining-action-2025) 
-- https://drive.google.com/drive/folders/1YxRQlW46bSU0lQH9latqMkKktw_wFQjh?usp=sharing
+- [Dataset dari Kompetisi](https://drive.google.com/drive/folders/1YxRQlW46bSU0lQH9latqMkKktw_wFQjh?usp=sharing)
