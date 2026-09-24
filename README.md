@@ -15,7 +15,6 @@ Proyek ini menerapkan *unsupervised visual clustering* pada citra makanan Nusant
 
 Notebook utama tersedia pada [`notebook/final-project-fp-kcv-2026.ipynb`](notebook/final-project-fp-kcv-2026.ipynb).
 
-> **Catatan:** Nomor cluster merupakan pengidentifikasi anonim, bukan nama kelas makanan. Sebagai contoh, `cluster = 0` tidak secara langsung merepresentasikan Ayam Bakar atau jenis makanan tertentu lainnya.
 
 ---
 
@@ -131,7 +130,7 @@ Pipeline utama terdiri atas beberapa tahap yang digambarkan sebagai berikut:
   <img src="image/pipeline.png" alt="Pipeline metodologi DINO, UMAP, dan K-Means">
 </p>
 
-> Jika berkas diagram Anda bernama `image.png` dan berada di root repositori, ubah `image/pipeline.png` menjadi `image.png`.
+
 
 ### 1. Prapemrosesan Citra
 
@@ -370,7 +369,6 @@ CUDA    : 12.8
 GPU     : NVIDIA GeForce RTX 4060
 ```
 
-> Sesuaikan versi di atas dengan lingkungan yang benar-benar digunakan untuk menghasilkan eksperimen final.
 
 Reproduksibilitas numerik secara persis masih dapat dipengaruhi oleh perbedaan perangkat keras, implementasi kernel CUDA, versi pustaka, versi driver, revisi bobot pralatih, dan operasi yang tidak sepenuhnya deterministik.
 
